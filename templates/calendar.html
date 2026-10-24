@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block title %}Content Calendar & Progress Tracker – CreatorAI Studio{% endblock %}
+{% block header_title %}Content Planner & Progress Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Header banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2.5">
+                <span class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                </span>
+                Editorial Content Calendar & Progress
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Plan, arrange, and mark posts across dates. Track real-time progress and completed work for every day.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="add-event-btn" class="px-4 py-2.5 rounded-xl gradient-brand text-white font-bold text-xs shadow-md shadow-indigo-500/20 hover:opacity-95 transition-all flex items-center gap-1.5">
+                <i data-lucide="calendar-plus" class="w-4 h-4"></i> Plan New Post
+            </button>
+        </div>
+    </div>
+
+    <!-- Top Progress & Metric Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <!-- Stat 1: Total Plans -->
+        <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Planned</p>
+                <h4 id="stat-total-count" class="text-2xl font-black text-slate-900 dark:text-white mt-0.5">0</h4>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+            </div>
+        </div>
+
+        <!-- Stat 2: In Progress -->
+        <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">In Progress</p>
+                <h4 id="stat-inprogress-count" class="text-2xl font-black text-amber-500 mt-0.5">0</h4>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+            </div>
+        </div>
+
+        <!-- Stat 3: Completed / Published -->
+        <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Completed / Done</p>
+                <h4 id="stat-completed-count" class="text-2xl font-black text-emerald-500 mt-0.5">0</h4>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            </div>
+        </div>
+
+        <!-- Stat 4: Progress Velocity Rate -->
+        <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Overall Progress</p>
+                <span id="stat-progress-percent" class="text-xs font-black text-indigo-600 dark:text-indigo-400">0%</span>
+            </div>
+            <div class="mt-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="stat-progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p id="stat-progress-ratio" class="text-[10px] text-slate-400 mt-1 font-medium">0 of 0 tasks completed</p>
+        </div>
+    </div>
+
+    <!-- Main Grid: Calendar Month (Left 7 cols) & Arrange / Progress Queue (Right 5 cols) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Monthly Grid (Left 7 cols) -->
+        <div class="lg:col-span-7 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h3 id="calendar-month-year" class="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                        <!-- Dynamic Month & Year -->
+                    </h3>
+                    <p class="text-[11px] text-slate-400">Click any date to mark progress or view its scheduled plans.</p>
+                </div>
+                <div class="flex items-center gap-1.5 self-start sm:self-auto">
+                    <button id="cal-prev-month" class="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors" title="Previous Month">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </button>
+                    <button id="cal-today-btn" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        Today
+                    </button>
+                    <button id="cal-next-month" class="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors" title="Next Month">
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Days of Week Header -->
+            <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold uppercase tracking-wider text-slate-400 pt-1">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+
+            <!-- Calendar Days Container -->
+            <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5">
+                <!-- Days populated dynamically by calendar.js with click handlers & progress bars -->
+            </div>
+
+            <!-- Calendar Legend / Guide -->
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 gap-2">
+                <div class="flex items-center gap-3">
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Planned</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> In Progress</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Completed</span>
+                </div>
+                <div class="text-[10px] text-slate-400">
+                    💡 Click a day to highlight & filter
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduled Queue List & Day Progress Tracker (Right 5 cols) -->
+        <div class="lg:col-span-5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div>
+                <!-- Focus Date Header & Day Progress Banner -->
+                <div id="day-focus-banner" class="p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/60 mb-3 transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-indigo-500 text-white flex items-center justify-center text-xs font-bold">
+                                <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                            </span>
+                            <div>
+                                <h4 id="focus-date-title" class="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white">All Scheduled Plans</h4>
+                                <p id="focus-date-subtitle" class="text-[11px] text-slate-500 dark:text-slate-400">Viewing all upcoming dates</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button id="clear-date-filter-btn" class="hidden px-2.5 py-1 rounded-lg text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
+                                View All
+                            </button>
+                            <button id="quick-add-date-btn" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold shadow-sm flex items-center gap-1 transition-colors">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Plan on Date
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Day Progress Bar -->
+                    <div id="day-progress-container" class="mt-2.5 pt-2.5 border-t border-indigo-200/50 dark:border-indigo-900/50">
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="font-bold text-slate-700 dark:text-slate-300">Date Progress:</span>
+                            <span id="day-progress-label" class="font-black text-indigo-600 dark:text-indigo-400">0%</span>
+                        </div>
+                        <div class="mt-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                            <div id="day-progress-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arrange & Filter Toolbar -->
+                <div class="space-y-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <!-- Search Input -->
+                        <div class="relative flex-1">
+                            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400"></i>
+                            <input type="text" id="filter-search-input" placeholder="Search plans or notes..." class="w-full pl-8 pr-3 py-1.5 rounded-xl text-xs border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <!-- Status Filter -->
+                        <select id="filter-status-select" class="px-2.5 py-1.5 rounded-xl text-xs border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="all">All Statuses</option>
+                            <option value="Planned">💡 Planned</option>
+                            <option value="In Progress">⏳ In Progress</option>
+                            <option value="Completed">✅ Completed</option>
+                        </select>
+                    </div>
+
+                    <!-- Platform Filter Pills -->
+                    <div class="flex items-center gap-1 overflow-x-auto pb-1 text-[11px]">
+                        <button class="filter-platform-btn px-2.5 py-1 rounded-lg font-bold bg-indigo-500 text-white transition-colors" data-platform="all">
+                            All
+                        </button>
+                        <button class="filter-platform-btn px-2.5 py-1 rounded-lg font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-platform="instagram">
+                            Instagram
+                        </button>
+                        <button class="filter-platform-btn px-2.5 py-1 rounded-lg font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-platform="linkedin">
+                            LinkedIn
+                        </button>
+                        <button class="filter-platform-btn px-2.5 py-1 rounded-lg font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-platform="twitter">
+                            X / Twitter
+                        </button>
+                        <button class="filter-platform-btn px-2.5 py-1 rounded-lg font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-platform="youtube">
+                            YouTube
+                        </button>
+                        <button class="filter-platform-btn px-2.5 py-1 rounded-lg font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" data-platform="blog">
+                            Blog
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scheduled list items with 1-click progress toggles -->
+                <div id="calendar-items-list" class="mt-3 space-y-3 max-h-[460px] overflow-y-auto pr-1">
+                    <!-- Populated dynamically by calendar.js -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="calendar-empty-state" class="py-12 flex flex-col items-center justify-center text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-3">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">No Plans Found</h4>
+                    <p class="text-xs text-slate-400 max-w-xs mt-1">No plans match the current date or filter. Click "Plan New Post" to schedule one.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Plan New Post -->
+<div id="plan-post-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <i data-lucide="calendar-plus" class="w-4 h-4 text-indigo-500"></i> Plan New Content
+            </h3>
+            <button onclick="CreatorAI.closeModal('plan-post-modal')" class="text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="plan-post-form" class="mt-4 space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Post Title or Topic <span class="text-rose-500">*</span></label>
+                <input type="text" id="plan-title" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. AI Workflow Tutorial Part 1">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Platform</label>
+                    <select id="plan-platform" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="instagram">Instagram</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="twitter">X / Twitter</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="blog">Blog / Article</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Date <span class="text-rose-500">*</span></label>
+                    <input type="date" id="plan-date" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Status</label>
+                    <select id="plan-status" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="Planned">💡 Planned Idea (0%)</option>
+                        <option value="In Progress">⏳ In Progress (50%)</option>
+                        <option value="Completed">✅ Completed / Done (100%)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Priority</label>
+                    <select id="plan-priority" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="Medium">Medium Priority</option>
+                        <option value="High">🔥 High Priority</option>
+                        <option value="Low">Low Priority</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">What progress has been done / Notes</label>
+                <textarea id="plan-notes" rows="3" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Outline completed, draft intro written, visuals need review..."></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="CreatorAI.closeModal('plan-post-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 rounded-xl gradient-brand text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-indigo-500/20">
+                    Schedule Plan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Edit Plan & Progress -->
+<div id="edit-plan-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <i data-lucide="edit-3" class="w-4 h-4 text-indigo-500"></i> Edit Plan & Mark Progress
+            </h3>
+            <button onclick="CreatorAI.closeModal('edit-plan-modal')" class="text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="edit-plan-form" class="mt-4 space-y-4">
+            <input type="hidden" id="edit-plan-id">
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Post Title or Topic <span class="text-rose-500">*</span></label>
+                <input type="text" id="edit-plan-title" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Platform</label>
+                    <select id="edit-plan-platform" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="instagram">Instagram</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="twitter">X / Twitter</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="blog">Blog / Article</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Date <span class="text-rose-500">*</span></label>
+                    <input type="date" id="edit-plan-date" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Status</label>
+                    <select id="edit-plan-status" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="Planned">💡 Planned Idea</option>
+                        <option value="In Progress">⏳ In Progress</option>
+                        <option value="Completed">✅ Completed / Published</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Priority</label>
+                    <select id="edit-plan-priority" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="Medium">Medium</option>
+                        <option value="High">🔥 High</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Progress % Slider -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Progress Completion</label>
+                    <span id="edit-progress-num" class="text-xs font-black text-indigo-600 dark:text-indigo-400">50%</span>
+                </div>
+                <input type="range" id="edit-plan-progress" min="0" max="100" step="10" class="w-full accent-indigo-600 cursor-pointer">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Progress Done / Notes</label>
+                <textarea id="edit-plan-notes" rows="3" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Describe what progress was done on this date..."></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="CreatorAI.closeModal('edit-plan-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 rounded-xl gradient-brand text-white text-xs font-semibold hover:opacity-95 shadow-md shadow-indigo-500/20">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+{% endblock %}

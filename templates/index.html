@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreatorAI – AI-Powered Content & Media Studio</title>
+    <!-- Tailwind CSS with custom theme config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Lucide Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Landing Navigation -->
+    <header class="border-b border-slate-200 dark:border-slate-800/80 bg-white/70 dark:bg-[#0b0f19]/70 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">CreatorAI</span>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-400">
+                <a href="#features" class="hover:text-indigo-500 transition-colors">Features</a>
+                <a href="#tools" class="hover:text-indigo-500 transition-colors">Studio Tools</a>
+                <a href="#how-it-works" class="hover:text-indigo-500 transition-colors">How It Works</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button class="btn-theme-toggle p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle theme">
+                    <i data-lucide="sun" class="w-4 h-4 theme-toggle-icon-sun hidden"></i>
+                    <i data-lucide="moon" class="w-4 h-4 theme-toggle-icon-moon"></i>
+                </button>
+
+                <a href="/login" class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-indigo-500 transition-colors">Sign In</a>
+                <a href="/register" class="px-4 py-2 rounded-xl gradient-brand text-white text-xs sm:text-sm font-semibold hover:opacity-95 shadow-md shadow-indigo-500/20 transition-all btn-shimmer">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-20 pb-24 px-4 sm:px-6 overflow-hidden">
+        <!-- Ambient background glows -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div class="absolute top-1/3 left-1/3 w-[400px] h-[250px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 text-xs font-semibold mb-6">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Next-Gen Creative Suite for Digital Builders
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15] mb-6">
+                Create Smarter.<br>
+                <span class="gradient-text">Create Faster. Create with AI.</span>
+            </h1>
+
+            <p class="text-base sm:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-10 max-w-2xl mx-auto">
+                All-in-one AI-powered workspace to research, draft, summarize, rewrite, generate captions, and manage digital content in seconds.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/register" class="w-full sm:w-auto px-8 py-3.5 rounded-xl gradient-brand text-white font-bold text-sm shadow-xl shadow-indigo-500/25 hover:opacity-95 transition-all btn-shimmer flex items-center justify-center gap-2">
+                    Start Creating Free <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <a href="#tools" class="w-full sm:w-auto px-8 py-3.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 font-bold text-sm hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-slate-850 transition-all flex items-center justify-center gap-2">
+                    Explore Tools <i data-lucide="compass" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Feature Cards Section -->
+    <section id="features" class="py-16 px-4 sm:px-6 border-t border-slate-200 dark:border-slate-800/80 bg-slate-100/50 dark:bg-slate-950/40">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-indigo-500 mb-2">Core Capabilities</h2>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Built for modern digital creators</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1 -->
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:border-indigo-500/40 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                        <i data-lucide="file-text" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-lg mb-2">AI Text Generator</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Generate comprehensive blogs, articles, essays, and product descriptions with custom tone, language, and word limits.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:border-emerald-500/40 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                        <i data-lucide="align-left" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-lg mb-2">Text Summarizer</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Distill lengthy articles, essays, and reports into bite-sized summaries, bullet points, or executive briefings.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:border-purple-500/40 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                        <i data-lucide="share-2" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-lg mb-2">Social Media Captions</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Craft viral captions and curated hashtag bundles optimized for Instagram, YouTube, Facebook, and LinkedIn.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:border-pink-500/40 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-pink-500/10 text-pink-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                        <i data-lucide="folder-heart" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-lg mb-2">Saved Projects & History</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Persist every creation securely in MongoDB, bookmark favorites, perform full-text search, and export as TXT.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Studio Tools Deep Dive -->
+    <section id="tools" class="py-20 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-indigo-500 mb-2">Suite Overview</h2>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Five Specialized Creative Engines</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/40 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Writer</span>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-3 mb-2">Long-form & Short-form</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                            Choose between Blog Posts, Articles, Academic Essays, Stories, or eCommerce Product Descriptions. Supports English, Hindi, and Hinglish.
+                        </p>
+                    </div>
+                    <a href="/login" class="text-xs font-semibold text-indigo-500 hover:text-indigo-400 flex items-center gap-1">Open Tool <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/40 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Rewriter</span>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-3 mb-2">AI Content Rewriter</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                            Adapt existing text into 5 distinctive stylistic voices: Professional, Simple, Creative, Concise, or Friendly in a single click.
+                        </p>
+                    </div>
+                    <a href="/login" class="text-xs font-semibold text-indigo-500 hover:text-indigo-400 flex items-center gap-1">Open Tool <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/40 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/20">Visuals</span>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-3 mb-2">AI Image Generator</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                            Ready for Stability AI image models. Clear developer setup instructions with full transparent status reporting.
+                        </p>
+                    </div>
+                    <a href="/login" class="text-xs font-semibold text-indigo-500 hover:text-indigo-400 flex items-center gap-1">Open Tool <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 px-4 sm:px-6 border-t border-slate-200 dark:border-slate-800/80 bg-slate-100/50 dark:bg-slate-950/40">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-indigo-500 mb-2">Simple Workflow</h2>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-14">How CreatorAI Works</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 relative">
+                    <span class="text-3xl font-extrabold text-indigo-500/30">01</span>
+                    <h4 class="text-base font-bold text-slate-900 dark:text-white mt-2 mb-2">Pick your Tool & Enter Prompt</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Select from the AI Writer, Summarizer, Caption Generator, or Rewriter and specify your desired tone, style, and length.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 relative">
+                    <span class="text-3xl font-extrabold text-indigo-500/30">02</span>
+                    <h4 class="text-base font-bold text-slate-900 dark:text-white mt-2 mb-2">Generate via Google Gemini</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Our backend communicates securely with Gemini models to produce high-fidelity content without leaking API secrets.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 relative">
+                    <span class="text-3xl font-extrabold text-indigo-500/30">03</span>
+                    <h4 class="text-base font-bold text-slate-900 dark:text-white mt-2 mb-2">Save, Copy & Export</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        One-click copy to clipboard, download as TXT, or save to your personal MongoDB project library.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800/80 py-10 px-4 sm:px-6 bg-white dark:bg-[#0b0f19]">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-900 dark:text-white">CreatorAI</span>
+                <span>• College Mini Project & AI Studio</span>
+            </div>
+            <div>
+                Crafted with Flask, MongoDB, Tailwind CSS, & Google Gemini AI.
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
+
